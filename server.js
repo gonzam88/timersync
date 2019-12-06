@@ -9,12 +9,18 @@ app.get('/', function(req, res){
 var port = process.env.PORT || 3000;
 
 http.listen(port, function(){
-  console.log('listening on *:3000');
+  console.log('listening on *:'+port);
 });
 
 var isCounting = false;
+var timeStarted;
+
 io.on('connection', function(socket){
 	console.log('a user connected');
+	if(isCounting){
+		socket.emit("start", timeStarted)
+	}
+
 	socket.on('disconnect', function(){
 		console.log('user disconnected');
 	});
@@ -28,6 +34,7 @@ io.on('connection', function(socket){
 			io.emit("start", timeClicked)
 			console.log("Started @ " + timeClicked)
 			isCounting = true;
+			timeStarted = timeClicked;
 		}
 		console.log(isCounting)
 
