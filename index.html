@@ -1,4 +1,4 @@
-<script src="noSleep.js" type="text/javascript"></script>
+<script src="./nosleep.js"></script>
 
 <style>
 	body{
@@ -126,4 +126,12 @@
 	    console.log("reset", msg)
 		StopTimer();
 	});
+
+
+
+	// nosleep
+	document.addEventListener('click', function enableNoSleep() {
+	  document.removeEventListener('click', enableNoSleep, false);
+	  noSleep.enable();
+	}, false);
 </script>
