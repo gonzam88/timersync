@@ -90,8 +90,9 @@
 		timerDisplay.innerHTML = mins + ':' + secs;
 	}
 
-	function StartTimer(){
-		countingFrom = Date.now();
+	function StartTimer(fromTime = Date.now()){
+
+		countingFrom = fromTime;
   	  	isCounting = true;
 		ShowTime()
 
@@ -120,7 +121,7 @@
 
 	socket.on('start', function(msg){
 	  console.log("start", msg)
-	  StartTimer()
+	  StartTimer(msg)
 	});
 
 	socket.on('reset', function(msg){
