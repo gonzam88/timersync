@@ -33,6 +33,14 @@
 	.timerOn{
 		border: 10px solid #1cdc95;
 	}
+	#nosleepbutton{
+		position: absolute;
+	    height: 50px;
+	    bottom: 20px;
+	    left: 50%;
+	    width: 200px;
+	    transform: translate(-50%, -50%);
+	}
 </style>
 
 <!doctype html>
@@ -44,10 +52,11 @@
 
 	</head>
 
-	<body class="timerOff">
+	<body class="timerOff" id="bodyposta">
 	<div id="container">
 		<div id="timer" class="noselect">
 		</div>
+		<button id="nosleepbutton" onclick="ActivarNoSleep()">Mantener pantalla encendida</button>
 	</div>
 
 	</body>
@@ -106,7 +115,10 @@
 		bodyEle.classList.add('timerOff');
 	}
 
-	window.addEventListener("click", function(event) {
+	bodyEle.addEventListener("click", function(event) {
+
+		if(event.srcElement.id != "bodyposta") return;
+		console.log("bodu click")
 		socket.emit('clicked', Date.now());
 	});
 
@@ -130,7 +142,13 @@
 
 	// nosleep
 	var noSleep = new NoSleep();
-	
+
+	function ActivarNoSleep(){
+		noSleep.enable();
+		let but = document.getElementById('nosleepbutton')
+ 		but.parentNode.removeChild(but);
+	}
+
 	document.addEventListener('click', function enableNoSleep() {
 	  document.removeEventListener('click', enableNoSleep, false);
 	  noSleep.enable();
