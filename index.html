@@ -63,8 +63,7 @@
 	var bodyEle = document.getElementsByTagName('body')[0];
 	var countingFrom = Date.now();
 
-	var noSleep = new NoSleep();
-	noSleep.enable();
+
 
 	function ShowTime(){
 		let s;
@@ -130,6 +129,8 @@
 
 
 	// nosleep
+	var noSleep = new NoSleep();
+	
 	document.addEventListener('click', function enableNoSleep() {
 	  document.removeEventListener('click', enableNoSleep, false);
 	  noSleep.enable();
