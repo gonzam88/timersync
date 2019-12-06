@@ -1,3 +1,5 @@
+<script src="noSleep.js" type="text/javascript"></script>
+
 <style>
 	body{
 		padding:0;
@@ -39,10 +41,6 @@
 	  <meta charset="utf-8">
 
 	  <title>Timer Sincronizado</title>
-	  <!-- <meta name="description" content="The HTML5 Herald"> -->
-	  <!-- <meta name="author" content="SitePoint"> -->
-
-	  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
 
 	</head>
 
@@ -59,14 +57,14 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-
-
 	var isCounting = false;
 	var socket = io();
 	var timerDisplay = document.getElementById('timer');
 	var bodyEle = document.getElementsByTagName('body')[0];
 	var countingFrom = Date.now();
 
+	var noSleep = new NoSleep();
+	noSleep.enable();
 
 	function ShowTime(){
 		let s;
