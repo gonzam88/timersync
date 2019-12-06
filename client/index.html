@@ -1,0 +1,130 @@
+<style>
+	body{
+		padding:0;
+		margin:0;
+		background-color: #000;
+		color: #c7c7c7;
+	}
+
+	.noselect {
+		-webkit-touch-callout: none; /* iOS Safari */
+		-webkit-user-select: none; /* Safari */
+		-khtml-user-select: none; /* Konqueror HTML */
+		-moz-user-select: none; /* Old versions of Firefox */
+		-ms-user-select: none; /* Internet Explorer/Edge */
+		user-select: none;
+	}
+
+	#timer{
+		margin: 0;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: 10em;
+		font-family: monospace;
+	}
+
+	.timerOff{
+		border: 5px solid #e81e4d;
+	}
+	.timerOn{
+		border: 10px solid #1cdc95;
+	}
+</style>
+
+<!doctype html>
+<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+
+	  <title>Timer Sincronizado</title>
+	  <!-- <meta name="description" content="The HTML5 Herald"> -->
+	  <!-- <meta name="author" content="SitePoint"> -->
+
+	  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+
+	</head>
+
+	<body class="timerOff">
+	<div id="container">
+		<div id="timer" class="noselect">
+		</div>
+	</div>
+
+	</body>
+</html>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+
+	var isCounting = false;
+	var socket = io();
+	var timerDisplay = document.getElementById('timer');
+	var bodyEle = document.getElementsByTagName('body')[0];
+	var countingFrom = Date.now();
+
+
+	function ShowTime(){
+		let s;
+		if(!isCounting){
+			s = 0;
+		}else {
+			s = Date.now() - countingFrom;
+		}
+
+
+		var ms = s % 1000;
+		s = (s - ms) / 1000;
+		var secs = s % 60;
+		s = (s - secs) / 60;
+		var mins = s % 60;
+		// var hrs = (s - mins) / 60;
+
+		// return hrs + ':' + mins + ':' + secs + '.' + ms;
+		secs = ("0" + secs).slice(-2);
+		mins = ("0" + mins).slice(-2);
+		timerDisplay.innerHTML = mins + ':' + secs;
+	}
+
+	function StartTimer(){
+		countingFrom = Date.now();
+  	  	isCounting = true;
+		ShowTime()
+
+		bodyEle.classList.remove('timerOff');
+		bodyEle.classList.add('timerOn');
+
+	}
+
+	function StopTimer(){
+		isCounting = false;
+		ShowTime()
+
+		bodyEle.classList.remove('timerOn');
+		bodyEle.classList.add('timerOff');
+	}
+
+	window.addEventListener("click", function(event) {
+		socket.emit('clicked', Date.now());
+	});
+
+
+	(function(){
+		 window.setInterval(ShowTime, 500)
+	})();
+
+
+	socket.on('start', function(msg){
+	  console.log("start", msg)
+	  StartTimer()
+	});
+
+	socket.on('reset', function(msg){
+	    console.log("reset", msg)
+		StopTimer();
+	});
+</script>
