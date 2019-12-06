@@ -150,6 +150,9 @@
 	}
 
 	document.addEventListener('click', function enableNoSleep() {
+		let but = document.getElementById('nosleepbutton')
+ 		but.parentNode.removeChild(but);
+		
 	  document.removeEventListener('click', enableNoSleep, false);
 	  noSleep.enable();
 	}, false);
