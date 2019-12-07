@@ -116,7 +116,6 @@
 
 		bodyEle.classList.remove('timerOff');
 		bodyEle.classList.add('timerOn');
-
 	}
 
 	function StopTimer(){
@@ -135,19 +134,17 @@
 			bodyEle.classList.remove('timerOn');
 			bodyEle.classList.add('timerOff');
 		}
-
-
 	});
 
 
 	(function(){
-		 window.setInterval(ShowTime, 1)
+		 window.setInterval(ShowTime, 100)
 	})();
 
 
 	socket.on('start', function(msg){
 	  console.log("start", msg)
-	  startedTxt.innerHTML = msg;
+	  //startedTxt.innerHTML = msg; // debug timecode text
 	  fromTime = msg;
 	  if(!isCounting) StartTimer()
 	});
