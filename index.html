@@ -16,7 +16,9 @@
 		-ms-user-select: none; /* Internet Explorer/Edge */
 		user-select: none;
 	}
-
+	#started{
+		font-family: monospace;
+	}
 	#timer{
 		margin: 0;
 		position: absolute;
@@ -62,6 +64,7 @@
 	<body class="timerOff" id="bodyposta">
 
 	<div id="timer" class="noselect"></div>
+	<span id="started"></span>
 
 	<div id="nosleepbutton">
 		click/tap en cualquier lado comienza y resetea.<br><br>
@@ -82,7 +85,7 @@
 	var timerDisplay = document.getElementById('timer');
 	var bodyEle = document.getElementsByTagName('body')[0];
 	var countingFrom = Date.now();
-
+	var startedTxt = document.getElementById('started');
 
 
 	function ShowTime(){
@@ -144,6 +147,7 @@
 
 	socket.on('start', function(msg){
 	  console.log("start", msg)
+	  startedTxt.innerHTML = msg;
 	  fromTime = msg;
 	  if(!isCounting) StartTimer()
 	});
