@@ -26,6 +26,20 @@
 		font-size: 10em;
 		font-family: monospace;
 	}
+	#nosleepbutton{
+		width: 100%;
+		height: 100%;
+		background-color:#272727de;
+		margin: 0;
+	    position: absolute;
+	    top: 50%;
+	    left: 50%;
+	    transform: translate(-50%, -50%);
+	    font-size: 3em;
+	    font-family: monospace;
+		padding-left:20px;
+		padding-top:20px;
+	}
 
 	.timerOff{
 		border: 5px solid #e81e4d;
@@ -33,14 +47,7 @@
 	.timerOn{
 		border: 10px solid #1cdc95;
 	}
-	#nosleepbutton{
-		position: absolute;
-	    height: 50px;
-	    bottom: 20px;
-	    left: 50%;
-	    width: 200px;
-	    transform: translate(-50%, -50%);
-	}
+
 </style>
 
 <!doctype html>
@@ -53,11 +60,15 @@
 	</head>
 
 	<body class="timerOff" id="bodyposta">
-	<div id="container">
-		<div id="timer" class="noselect">
-		</div>
-		<button id="nosleepbutton" onclick="ActivarNoSleep()">Mantener pantalla encendida</button>
+
+	<div id="timer" class="noselect"></div>
+
+	<div id="nosleepbutton">
+		click/tap en cualquier lado comienza y resetea.<br><br>
+		todos controlan.<br><br>
+		click para empezar
 	</div>
+
 
 	</body>
 </html>
@@ -96,7 +107,7 @@
 		timerDisplay.innerHTML = mins + ':' + secs;
 	}
 
-	function StartTimer(fromTime = Date.now()){
+	function StartTimer(){
 
 		countingFrom = fromTime;
   	  	isCounting = true;
@@ -116,21 +127,23 @@
 	}
 
 	bodyEle.addEventListener("click", function(event) {
-
 		if(event.srcElement.id != "bodyposta") return;
-		console.log("bodu click")
-		socket.emit('clicked', Date.now());
+		let dateNow = Date.now();
+		socket.emit('clicked', dateNow);
+		fromTime = Date.now();
+		StartTimer();
 	});
 
 
 	(function(){
-		 window.setInterval(ShowTime, 50)
+		 window.setInterval(ShowTime, 300)
 	})();
 
 
 	socket.on('start', function(msg){
 	  console.log("start", msg)
-	  StartTimer(msg)
+	  fromTime = msg;
+	  if(!isCounting) StartTimer()
 	});
 
 	socket.on('reset', function(msg){
@@ -149,11 +162,9 @@
  		but.parentNode.removeChild(but);
 	}
 
-	document.addEventListener('click', function enableNoSleep() {
-		let but = document.getElementById('nosleepbutton')
- 		but.parentNode.removeChild(but);
-		
-	  document.removeEventListener('click', enableNoSleep, false);
-	  noSleep.enable();
-	}, false);
+	var nosleepbutton = document.getElementById('nosleepbutton')
+	nosleepbutton.addEventListener('click', function (event) {
+		noSleep.enable();
+ 		nosleepbutton.parentNode.removeChild(nosleepbutton);
+	});
 </script>
