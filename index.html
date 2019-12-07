@@ -90,7 +90,7 @@
 		if(!isCounting){
 			s = 0;
 		}else {
-			s = Date.now() - countingFrom;
+			s = Date.now() - fromTime;
 		}
 
 
@@ -108,8 +108,6 @@
 	}
 
 	function StartTimer(){
-
-		countingFrom = fromTime;
   	  	isCounting = true;
 		ShowTime()
 
@@ -120,18 +118,22 @@
 
 	function StopTimer(){
 		isCounting = false;
-		ShowTime()
-
 		bodyEle.classList.remove('timerOn');
 		bodyEle.classList.add('timerOff');
+		ShowTime()
 	}
 
 	bodyEle.addEventListener("click", function(event) {
 		if(event.srcElement.id != "bodyposta") return;
-		let dateNow = Date.now();
-		socket.emit('clicked', dateNow);
-		fromTime = Date.now();
-		StartTimer();
+
+		socket.emit('clicked');
+		if(!isCounting){
+			// para tener feedback inmediato. despues recibe la hora actualizada por server
+			bodyEle.classList.remove('timerOn');
+			bodyEle.classList.add('timerOff');
+		}
+
+
 	});
 
 
@@ -147,23 +149,16 @@
 	});
 
 	socket.on('reset', function(msg){
-	    console.log("reset", msg)
+	    console.log("reset")
 		StopTimer();
 	});
 
 
 
 	// nosleep
-	var noSleep = new NoSleep();
-
-	function ActivarNoSleep(){
-		noSleep.enable();
-		let but = document.getElementById('nosleepbutton')
- 		but.parentNode.removeChild(but);
-	}
-
 	var nosleepbutton = document.getElementById('nosleepbutton')
 	nosleepbutton.addEventListener('click', function (event) {
+		var noSleep = new NoSleep();
 		noSleep.enable();
  		nosleepbutton.parentNode.removeChild(nosleepbutton);
 	});

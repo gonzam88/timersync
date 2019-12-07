@@ -30,16 +30,17 @@ io.on('connection', function(socket){
 
 	socket.on('clicked', function(timeClicked){
 		if(isCounting){
-			io.emit("reset", timeClicked)
+			io.emit("reset")
 			console.log("Stopped @ " + timeClicked)
 			isCounting = false;
 		}else{
-			io.emit("start", timeClicked)
-			console.log("Started @ " + timeClicked)
+
+			timeStarted = Date.now();
+			io.emit("start", timeStarted)
+			console.log("Started @ " + timeStarted)
 			isCounting = true;
-			timeStarted = timeClicked;
 		}
-		console.log(isCounting)
+		console.log("isCounting",isCounting)
 
 	})
 });
