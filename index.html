@@ -1,4 +1,5 @@
 <script src="./nosleep.js"></script>
+<script src="./timesync.min.js"></script>
 
 <style>
 	body{
@@ -93,7 +94,7 @@
 		if(!isCounting){
 			s = 0;
 		}else {
-			s = Date.now() - fromTime;
+			s = ts.now() - fromTime;
 		}
 
 
@@ -153,6 +154,34 @@
 	    console.log("reset")
 		StopTimer();
 	});
+	socket.on('timesync', function (data) {
+      //console.log('receive', data);
+      ts.receive(null, data);
+    });
+
+	var ts = timesync.create({
+	 server: socket,
+	 interval: 5000
+   });
+
+
+   ts.on('sync', function (state) {
+         console.log('sync ' + state + '');
+       });
+       ts.on('change', function (offset) {
+         console.log('changed offset: ' + offset + ' ms');
+       });
+       ts.send = function (socket, data, timeout) {
+         //console.log('send', data);
+         return new Promise(function (resolve, reject) {
+           var timeoutFn = setTimeout(reject, timeout);
+           socket.emit('timesync', data, function () {
+             clearTimeout(timeoutFn);
+             resolve();
+           });
+         });
+       };
+
 
 
 

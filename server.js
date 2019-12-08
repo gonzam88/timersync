@@ -7,6 +7,7 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+
 app.use(express.static('public'))
 
 var port = process.env.PORT || 3000;
@@ -41,6 +42,14 @@ io.on('connection', function(socket){
 			isCounting = true;
 		}
 		console.log("isCounting",isCounting)
-
 	})
+
+
+		socket.on('timesync', function (data) {
+	    console.log('message', data);
+	    socket.emit('timesync', {
+	      id: data && 'id' in data ? data.id : null,
+	      result: Date.now()
+	    });
+	  });
 });
