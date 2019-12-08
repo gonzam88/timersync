@@ -132,8 +132,8 @@
 		socket.emit('clicked');
 		if(!isCounting){
 			// para tener feedback inmediato. despues recibe la hora actualizada por server
-			bodyEle.classList.remove('timerOn');
-			bodyEle.classList.add('timerOff');
+			bodyEle.classList.remove('timerOff');
+			bodyEle.classList.add('timerOn');
 		}
 	});
 
