@@ -43,6 +43,7 @@
 	    font-family: monospace;
 		padding-left:20px;
 		padding-top:20px;
+		z-index: 200;
 	}
 
 	.timerOff{
@@ -50,6 +51,50 @@
 	}
 	.timerOn{
 		border: 10px solid #1cdc95;
+	}
+
+	#guion{
+		position: absolute;
+		top: 30px;
+		left: 0;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		font-family: monospace;
+	}
+	#seccionActual{
+		position: relative;
+		width: 100%;
+		text-align: center;
+		#titulo{
+			font-size: 4em;
+			z-index: 100;
+			position: relative;
+			mix-blend-mode: difference;
+		}
+	}
+	#seccionSiguiente{
+		position: relative;
+		top: 30px;
+		#titulo{
+			font-size: 3em;
+			color: #b6b6b6;
+		}
+	}
+	#progresoContainer{
+		position: absolute;
+		top: -5px;
+		left: 50%;
+		width: calc(100% - 60px);
+		height: 80px;
+		transform: translate(-50%, 0px);
+		border: 1px solid white;
+		#progresoBarra{
+			height: 100%;
+			background-color: #b6b6b6;
+		}
 	}
 
 </style>
@@ -62,6 +107,18 @@
 	</head>
 
 	<body class="timerOff" id="bodyposta">
+
+		<div id="guion">
+			<div id="seccionActual">
+				<div id="titulo"></div>
+				<div id="progresoContainer">
+					<div id="progresoBarra"></div>
+				</div>
+			</div>
+			<div id="seccionSiguiente">
+				<div id="titulo"></div>
+			</div>
+		</div>
 
 		<div id="timer" class="noselect"></div>
 		<span id="started"></span>
@@ -86,6 +143,93 @@
 	var countingFrom = Date.now();
 	var startedTxt = document.getElementById('started');
 
+	var seccionActualTitulo = document.getElementById('seccionActual').querySelector('#titulo');
+	var seccionSiguienteTitulo = document.getElementById('seccionSiguiente').querySelector('#titulo');
+	var progresoBarra = document.getElementById('progresoBarra');
+	var progresoSeccionActual = 0;
+
+	var viudaGuion = [
+		{
+			start: '0:0',
+			title: 'silencio',
+		},
+		{
+			start: '0:10',
+			title: 'A Melodia - Galaxia',
+		},
+		{
+			start: '1:18',
+			title: 'B Mini Terror',
+		},
+		{
+			start: '2:20',
+			title: 'Melodia',
+		},
+		{
+			start: '3:05',
+			title: 'AB: Monk gestos cortos',
+		},
+		{
+			start: '4:00',
+			title: 'Galaxia',
+		},
+		{
+			start: '4:30',
+			title: 'Monk'
+		},
+		{
+			start: '5:00',
+			title: 'AB Terror Ruido'
+		},
+		{
+			start: '5:30',
+			title: 'Monk'
+		},
+		{
+			start: '6:00',
+			title: 'B1 Galaxia'
+		},
+		{
+			start: '6:20',
+			title: 'Terror expansivo'
+		},
+		{
+			start: '6:40',
+			title: 'Monk'
+		},
+		{
+			start: '7:00',
+			title: 'Galaxia'
+		},
+		{
+			start: '7:10',
+			title: 'B R E A K'
+		},
+		{
+			start: '7:20',
+			title: 'Galaxia'
+		},
+		{
+			start: '9:00',
+			title: 'Susurros texturas'
+		},
+		{
+			start: '9:23',
+			title: 'Stay Here'
+		},
+		{
+			start: '10:00',
+			title: 'fin'
+		}
+	]
+	
+	viudaGuion.forEach(function(item){
+		const s = item.start.split(':');
+		const m = parseInt(s[0]) * 60 + parseInt(s[1]);
+		item.startsecs = m;
+	})
+	console.log(viudaGuion)
+	var currGuionIndex = 0;
 
 	function ShowTime(){
 		let s;
@@ -94,7 +238,7 @@
 		}else {
 			s = ts.now() - fromTime;
 		}
-
+		
 		var ms = s % 1000;
 		s = (s - ms) / 1000;
 		var secs = s % 60;
@@ -105,6 +249,33 @@
 		secs = ("0" + secs).slice(-2);
 		mins = ("0" + mins).slice(-2);
 		timerDisplay.innerHTML = mins + ':' + secs;
+		
+		if(fromTime == undefined || !isCounting) return;
+		var elapsed = (ts.now() - fromTime) / 1000;
+		// console.log(elapsed, viudaGuion[currGuionIndex+1]?.startsecs)
+		progresoSeccionActual = (elapsed - viudaGuion[currGuionIndex].startsecs) / (viudaGuion[currGuionIndex+1]?.startsecs - viudaGuion[currGuionIndex].startsecs);
+		// clamp progresoSeccionActual 0-1
+		progresoSeccionActual = Math.min(1, Math.max(0, progresoSeccionActual));
+
+		if(currGuionIndex < viudaGuion.length){
+			// chequear si hay que avanzar en el guion
+			if(elapsed >= viudaGuion[currGuionIndex+1]?.startsecs){
+				currGuionIndex++;
+				// console.log("Nueva etapa guion", viudaGuion[currGuionIndex].title)
+			}
+		}
+		SetGuionHtml();
+	}
+
+	function SetGuionHtml(){
+		// actual
+		seccionActualTitulo.innerHTML = viudaGuion[currGuionIndex].title;
+		// barra progreso
+		progresoBarra.style.width = progresoSeccionActual * 100 + '%';
+		// siguiente
+		let proximoTiempo = currGuionIndex+1 < viudaGuion.length ? viudaGuion[currGuionIndex+1].start : '';
+		let proximoTitulo = currGuionIndex+1 < viudaGuion.length ? viudaGuion[currGuionIndex+1].title : '';
+		seccionSiguienteTitulo.innerHTML = `<strong>${proximoTiempo}</strong> ${proximoTitulo}`;
 	}
 
 	function StartTimer(){
@@ -148,6 +319,7 @@
 
 	socket.on('reset', function(msg){
 	    console.log("reset")
+		currGuionIndex = 0;
 		StopTimer();
 	});
 	socket.on('timesync', function (data) {
@@ -162,10 +334,10 @@
 
 
    ts.on('sync', function (state) {
-         console.log('sync ' + state + '');
+        //  console.log('sync ' + state + '');
        });
        ts.on('change', function (offset) {
-         console.log('changed offset: ' + offset + ' ms');
+        //  console.log('changed offset: ' + offset + ' ms');
        });
        ts.send = function (socket, data, timeout) {
          //console.log('send', data);

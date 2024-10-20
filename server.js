@@ -35,8 +35,8 @@ io.on('connection', function(socket){
 			console.log("Stopped @ " + timeClicked)
 			isCounting = false;
 		}else{
-
-			timeStarted = Date.now();
+			const offst = -3000; // arranca la cuenta en -3s
+			timeStarted = Date.now() + 4000;
 			io.emit("start", timeStarted)
 			console.log("Started @ " + timeStarted)
 			isCounting = true;
@@ -46,7 +46,8 @@ io.on('connection', function(socket){
 
 
 		socket.on('timesync', function (data) {
-	    console.log('message', data);
+	    // con
+		// console.log('message', data);
 	    socket.emit('timesync', {
 	      id: data && 'id' in data ? data.id : null,
 	      result: Date.now()
