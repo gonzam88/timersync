@@ -96,6 +96,40 @@
 			background-color: #b6b6b6;
 		}
 	}
+	.botones{
+		position: absolute;
+		bottom: 200px;
+		width: 100%;
+		display: flex;
+		justify-content: space-evenly;
+	}
+	.btn{
+		height: 200px;
+		width: 200px;
+		background: #c7c7c7;
+		border-radius: 50%;
+		color: #ffffff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 100px;
+	}
+	.btn.disabled{
+		opacity: .2;
+		pointer-events: none;
+	}
+
+	@media (orientation: landscape) {
+		body {
+			.botones{
+				bottom: 20px;
+			}
+			.btn{
+				width: 150px;
+				height: 150px;
+			}
+		}
+	}
 
 </style>
 
@@ -123,6 +157,11 @@
 		<div id="timer" class="noselect"></div>
 		<span id="started"></span>
 
+		<div class="botones">
+			<div class="btn" id="stopBtn">⏹︎</div>
+			<div class="btn" id="playBtn">⏵︎</div>
+		</div>
+
 		<button id="nosleepbutton" onclick="EnableNoSleep()">
 			click/tap en cualquier lado comienza y resetea.<br><br>
 			todos controlan.<br><br>
@@ -147,6 +186,11 @@
 	var seccionSiguienteTitulo = document.getElementById('seccionSiguiente').querySelector('#titulo');
 	var progresoBarra = document.getElementById('progresoBarra');
 	var progresoSeccionActual = 0;
+
+	const playBtn = document.getElementById("playBtn");
+	const stopBtn = document.getElementById("stopBtn");
+	// playBtn.classList.add('disabled');
+	stopBtn.classList.add('disabled');
 
 	var viudaGuion = [
 		{
@@ -282,26 +326,46 @@
   	  	isCounting = true;
 		bodyEle.classList.remove('timerOff');
 		bodyEle.classList.add('timerOn');
+		
+		playBtn.classList.add('disabled');
+		stopBtn.classList.remove('disabled');
 	}
 
 	function StopTimer(){
 		isCounting = false;
 		bodyEle.classList.remove('timerOn');
 		bodyEle.classList.add('timerOff');
+
+		playBtn.classList.remove('disabled');
+		stopBtn.classList.add('disabled');
 	}
 
-	bodyEle.addEventListener("click", function(event) {
-		if(event.srcElement.id != "bodyposta") return;
+	// bodyEle.addEventListener("click", function(event) {
+	// 	if(event.srcElement.id != "bodyposta") return;
 
+	// 	socket.emit('clicked');
+	// 	if(!isCounting){
+	// 		// para tener feedback inmediato. despues recibe la hora actualizada por server
+	// 		bodyEle.classList.remove('timerOff');
+	// 		bodyEle.classList.add('timerOn');
+	// 	}else{
+	// 		bodyEle.classList.remove('timerOn');
+	// 		bodyEle.classList.add('timerOff');
+	// 	}
+	// });
+
+	playBtn.addEventListener("click", function(event) {
 		socket.emit('clicked');
-		if(!isCounting){
-			// para tener feedback inmediato. despues recibe la hora actualizada por server
-			bodyEle.classList.remove('timerOff');
-			bodyEle.classList.add('timerOn');
-		}else{
-			bodyEle.classList.remove('timerOn');
-			bodyEle.classList.add('timerOff');
-		}
+		bodyEle.classList.remove('timerOff');
+		bodyEle.classList.add('timerOn');
+		// StartTimer();
+	});
+
+	stopBtn.addEventListener("click", function(event) {
+		socket.emit('clicked');
+		bodyEle.classList.remove('timerOn');
+		bodyEle.classList.add('timerOff');
+		StopTimer();
 	});
 
 
