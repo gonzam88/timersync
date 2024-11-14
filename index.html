@@ -113,6 +113,10 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 100px;
+		img{
+			width: 50px;
+			height: 50px;
+		}
 	}
 	.btn.disabled{
 		opacity: .2;
@@ -138,6 +142,8 @@
 	<head>
 	  <meta charset="utf-8">
 	  <title>Timer Sincronizado</title>
+	  <meta name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 	</head>
 
 	<body class="timerOff" id="bodyposta">
@@ -158,8 +164,12 @@
 		<span id="started"></span>
 
 		<div class="botones">
-			<div class="btn" id="stopBtn">⏹️</div>
-			<div class="btn" id="playBtn">▶️</div>
+			<div class="btn" id="stopBtn">
+				<img src="/stop.png"/>
+			</div>
+			<div class="btn" id="playBtn">
+				<img src="/play.png"/>
+			</div>
 		</div>
 
 		<button id="nosleepbutton" onclick="EnableNoSleep()">
